@@ -24,13 +24,13 @@ function add_workers()
                                 cmd = `ssh $sshflags juser@$m nproc`
                                 io, _= open(detach(cmd))
                                 np = parseint(readall(io))
-                                break;
+                                (np > 0) && break;
                             catch
-                                sleep(2.0)
+                                sleep(5.0)
                             end
                             n_try_connect = n_try_connect - 1
                         end                    
-                        ((n_try_connect == 0) || (np == 0))  && error("Error detecting num cores on $m")
+                        (n_try_connect == 0) && error("Error detecting num cores on $m")
 
                         npids = addprocs(fill("juser@$m", np); sshflags=sshflags)
 
