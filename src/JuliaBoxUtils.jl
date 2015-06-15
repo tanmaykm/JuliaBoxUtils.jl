@@ -16,31 +16,29 @@ function add_workers()
 
                 for m in new_machines
                     try
-                        # Wait till AWS route is setup to the newly started machine
+                        # AWS route and key setup takes some time. Retry a few times.
                         n_try_connect = 30
+                        np = 0
                         while n_try_connect > 0
                             try
-                                s=connect(m, 22)
-                                close(s)
+                                cmd = `ssh $sshflags juser@$m nproc`
+                                io, _= open(detach(cmd))
+                                np = parseint(readall(io))
                                 break;
                             catch
                                 sleep(2.0)
                             end
                             n_try_connect = n_try_connect - 1
                         end                    
-                        n_try_connect == 0 && error("Route not found to $m")
+                        ((n_try_connect == 0) || (np == 0))  && error("Error detecting num cores on $m")
 
-                        cmd = `ssh $sshflags juser@$m nproc`
-                        io, _= open(detach(cmd))
-                        np = parseint(readall(io))
                         npids = addprocs(fill("juser@$m", np); sshflags=sshflags)
 
                         println("Added $(length(npids)) workers. Total workers $(nworkers())")
                     catch e
-                        println("Error detecting num cores on $m")
+                        println("Error $e processing machine $(m).")
                     end
                 end
-
             end
             sleep(1.0)
         end
