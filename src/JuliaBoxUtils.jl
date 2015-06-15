@@ -12,6 +12,7 @@ function add_workers()
             if isfile(mfile)
                 machines = [strip(x) for x in split(readall(mfile))]
                 new_machines = setdiff(machines, active_machines)
+                active_machines = machines
 
                 for m in new_machines
                     try
@@ -35,7 +36,6 @@ function add_workers()
                         npids = addprocs(fill("juser@$m", np); sshflags=sshflags)
 
                         println("Added $(length(npids)) workers. Total workers $(nworkers())")
-                        push!(active_machines, m)
                     catch e
                         println("Error detecting num cores on $m")
                     end
