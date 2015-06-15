@@ -19,7 +19,7 @@ function add_workers()
                         cmd = `ssh $sshflags juser@$m nproc`
                         io, _= open(detach(cmd))
                         np = parseint(readall(io))
-                        npids = addprocs(fill("juser@$m", np))
+                        npids = addprocs(fill("juser@$m", np); sshflags=sshflags)
 
                         println("Added $(length(npids)) workers. Total workers $(nworkers())")
                     catch e
