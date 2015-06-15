@@ -27,6 +27,7 @@ function add_workers()
                             end
                             n_try_connect = n_try_connect - 1
                         end                    
+                        n_try_connect == 0 && error("Route not found to $m")
 
                         cmd = `ssh $sshflags juser@$m nproc`
                         io, _= open(detach(cmd))
