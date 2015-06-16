@@ -47,7 +47,7 @@ function add_workers(hostlist; debug=false, nproc=false)
             end
 
             np = 32  # The above is only to test connectivity. Assuming 32 cores anyways.
-            ap_hosts=[]
+            ap_hosts=Any[]
             for m in hosts
                 append!(ap_hosts, fill("juser@$m", np))
             end
