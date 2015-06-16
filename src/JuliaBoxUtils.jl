@@ -7,15 +7,13 @@ const sshflags = `-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o
 
 function test_nproc(m, debug, t0)
     try
-        debug && println(time()-t0, " $m before nproc")
         cmd = `ssh $sshflags juser@$m nproc`
         io, _= open(detach(cmd))
-        debug && println(time()-t0, " $m after nproc")
         np = parseint(readall(io))
-        debug && println(time()-t0, " $m nproc $np")
         (np > 0) ? true : false
     catch e
-        debug && println(time()-t0, " $m error $e trying again")
+        str = " $m error $e trying again\n"
+        debug && print(time()-t0, str)
     end
 end
 
@@ -37,6 +35,7 @@ function add_workers(hostlist; debug=false, nproc=false)
                                 end
                             end
                         end
+                        debug && println("hosts,results  : ", hosts, ", ", results)
                         if !all(results)
                             debug && println(time()-t0, " trying nproc again after 5 seconds")
                             sleep(5.0)
