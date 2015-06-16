@@ -57,7 +57,7 @@ function add_workers(hostlist; debug=false, nproc=false)
 
             println("Added $(length(npids)) workers. Total workers $(nworkers())")
         catch e
-            println("Error $e processing machine $(m).")
+            println("Error $e processing machines $(hosts).")
         end
     end
 end
