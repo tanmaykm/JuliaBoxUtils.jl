@@ -20,7 +20,7 @@ end
 function add_workers(hostlist; debug=false, nproc=false)
     t0 = time()
     while length(hostlist) > 0
-        hosts = splice!(hostlist, 1:(length(hostlist)>5 ? 5 : length(hostlist)))
+        hosts = splice!(hostlist, 1:(length(hostlist)>7 ? 7 : length(hostlist)))
         try
             # AWS route and key setup takes some time. Retry a few times.
             if nproc
@@ -36,7 +36,9 @@ function add_workers(hostlist; debug=false, nproc=false)
                             end
                         end
                         debug && println("hosts,results  : ", hosts, ", ", results)
-                        if !all(results)
+                        if all(results)
+                            break
+                        else
                             debug && println(time()-t0, " trying nproc again after 5 seconds")
                             sleep(5.0)
                         end
