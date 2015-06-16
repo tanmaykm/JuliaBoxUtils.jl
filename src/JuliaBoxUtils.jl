@@ -40,7 +40,7 @@ function add_workers(hostlist; debug=false)
     end
 end
 
-function add_workers(;block::Bool=true, active_machines::Array=Any[]; debug=false)
+function add_workers(;block::Bool=true, active_machines::Array=Any[], debug=false)
     if block
         while !isfile(mfile)
             sleep(1.0)
