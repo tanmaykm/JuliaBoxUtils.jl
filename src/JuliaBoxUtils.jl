@@ -5,7 +5,7 @@ export add_workers
 const mfile = "/home/juser/.juliabox/machinefile.private"
 const sshflags = `-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=ERROR -i /home/juser/.ssh/id_rsa`
 
-function test_nproc(m, debug)
+function test_nproc(m, debug, t0)
     try
         debug && println(time()-t0, " $m before nproc")
         cmd = `ssh $sshflags juser@$m nproc`
@@ -33,7 +33,7 @@ function add_workers(hostlist; debug=false, nproc=false)
                         @sync begin
                             for (idx,m) in enumerate(hosts)
                                 let m=m, idx=idx
-                                    @async results[idx] = test_nproc(m, debug)
+                                    @async results[idx] = test_nproc(m, debug, t0)
                                 end
                             end
                         end
