@@ -49,8 +49,10 @@ function add_workers(hostlist; debug=false, nproc=false)
 
             np = 32  # The above is only to test connectivity. Assuming 32 cores anyways.
             ap_hosts=Any[]
-            for m in hosts
-                append!(ap_hosts, fill("juser@$m", np))
+            for pidx in 1:np
+                for m in hosts
+                    push!(ap_hosts, "juser@$m")
+                end
             end
             debug && println(time()-t0, " $hosts before addprocs")
             npids = addprocs(ap_hosts; sshflags=sshflags)
