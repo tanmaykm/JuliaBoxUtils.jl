@@ -1,5 +1,7 @@
 module JuliaBoxUtils
 
+using Compat
+
 export add_workers
 
 const mfile = "/home/juser/.juliabox/machinefile.private"
@@ -10,7 +12,7 @@ function test_nproc(m, debug, t0)
     try
         cmd = `ssh $sshflags juser@$m nproc`
         io, _= open(detach(cmd))
-        np = parseint(readall(io))
+        np = @compat parse(Int, readall(io))
         (np > 0) ? true : false
     catch e
         str = " $m error $e trying again\n"
