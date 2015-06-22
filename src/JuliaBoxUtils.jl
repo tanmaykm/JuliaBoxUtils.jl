@@ -4,13 +4,45 @@ using Compat
 
 export add_workers
 
-const mfile = "/home/juser/.juliabox/machinefile.private"
-const sshflags = `-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=ERROR -i /home/juser/.ssh/id_rsa`
+mfile = "/home/juser/.juliabox/machinefile.private"
+keyfile = "/home/juser/.ssh/id_rsa"
+sshflags = `-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=ERROR -i $keyfile`
+userid = "juser"
+exename = "$JULIA_HOME/julia"
+exedir = "/home/juser"
+
 const isv3 = isless(Base.VERSION, v"0.4.0-")
+
+function set_defaults(;_mfile=nothing, _keyfile=nothing, _userid=nothing, _exename=nothing, _exedir=nothing)
+    global mfile
+    global userid
+    global keyfile
+    global sshflags
+    global exename
+    global exedir
+
+    if _mfile != nothing
+        mfile = _mfile
+    end
+    if _userid != nothing
+        userid = _userid
+    end
+    if _keyfile != nothing
+        keyfile = _keyfile
+        sshflags = `-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=ERROR -i $keyfile`
+    end
+    if _exename != nothing
+        exename = _exename
+    end
+    if _exedir != nothing
+        exedir = _exedir
+    end
+    nothing
+end
 
 function test_nproc(m, debug, t0)
     try
-        cmd = `ssh $sshflags juser@$m nproc`
+        cmd = `ssh $sshflags $userid@$m nproc`
         io, _= open(detach(cmd))
         np = @compat parse(Int, readall(io))
         (np > 0) ? true : false
@@ -64,14 +96,14 @@ function add_workers(hostlist; debug=false, nproc=false)
             for pidx in 1:np
                 for m in hosts
                     if isv3
-                        push!(ap_hosts, "juser@$m")
+                        push!(ap_hosts, "$userid@$m")
                     else
-                        push!(ap_hosts, ("juser@$m", :auto))
+                        push!(ap_hosts, ("$userid@$m", :auto))
                     end
                 end
             end
             debug && println(time()-t0, " before addprocs")
-            npids = addprocs(ap_hosts; sshflags=sshflags)
+            npids = addprocs(ap_hosts; sshflags=sshflags, exename=exename, dir=exedir)
             debug && println(time()-t0, " after addprocs")
 
             println("Added $(length(npids)) workers. Total workers $(nworkers())")
