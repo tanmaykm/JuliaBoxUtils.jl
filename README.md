@@ -1,3 +1,6 @@
 # JuliaBoxUtils
 
-[![Build Status](https://travis-ci.org/tanmaykm/JuliaBoxUtils.jl.svg?branch=master)](https://travis-ci.org/tanmaykm/JuliaBoxUtils.jl)
+JuliaBox internal routines.
+
+See: <https://juliabox.org/>
+

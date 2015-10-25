@@ -2,6 +2,8 @@ module JuliaBoxUtils
 
 using Compat
 
+include("rlimit.jl")
+
 export add_workers
 
 mfile = "/home/juser/.juliabox/machinefile.private"
