@@ -55,8 +55,17 @@ else
     end
 
     function Base.show(io::IO, l::SysRlimit)
-        println(io, "soft: $(convert(Clong, l.rlim_cur))")
-        println(io, "hard: $(convert(Clong, l.rlim_max))")
+        if l.rlim_cur > typemax(Clong)
+            println(io, "soft: $(l.rlim_cur)")
+        else
+            println(io, "soft: $(convert(Clong, l.rlim_cur))")
+        end
+
+        if l.rlim_max > typemax(Clong)
+            println(io, "hard: $(l.rlim_max)")
+        else
+            println(io, "hard: $(convert(Clong, l.rlim_max))")
+        end
         nothing
     end
 
